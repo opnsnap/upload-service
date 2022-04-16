@@ -12,7 +12,7 @@ app.use(express.urlencoded({ limit: "1mb" }));
 const multer = Multer({ storage: Multer.memoryStorage(), limits: { fileSize: 1024 * 1024 * 1 /*1mb*/ } }).single("file");
 const minioClient = new Client({
     endPoint: process.env.MINIO_ENDPOINT!,
-    port: (process.env.MINIO_PORT) ? parseInt(process.env.MINIO_PORT, 10) : 9000,
+    port: (process.env.MINIO_PORT) ? parseInt(process.env.MINIO_PORT, 10) : 8080,
     useSSL: (process.env.MINIO_SECURE === 'true'),
     accessKey: process.env.MINIO_ACCESSKEY!,
     secretKey: process.env.MINIO_SECRETKEY!
