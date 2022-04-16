@@ -19,29 +19,25 @@ const minioClient = new Client({
     secretKey: process.env.MINIO_SECRETKEY!
 });
 
-app.post("/usvc/upload", multer, function (req, res) {
-    if (req.file /*&& req.body.uid*/) {
-        minioClient.putObject(process.env.MINIO_BUCKET!, req.file.originalname, req.file.buffer, function (error, etag) {
-            if (error) {
-                console.log(error);
+app.get('/usvc/presignedUrl', (req, res) => {
+    minioClient.presignedPutObject(
+        process.env.MINIO_BUCKET!,
+        req.body.filename,
+        10 * 60 /* 10 minutes */,
+        (err, presignedUrl) => {
+            if (err) {
                 res.status(500);
-                res.send(error);
-                res.end();
+                res.send({
+                    error: err.toString()
+                });
+            } else {
+                res.status(200);
+                res.send({
+                    url: presignedUrl
+                });
             }
-
-            res.status(200);
-            res.send({
-                msg: "Successfully uploaded file!",
-                eTag: etag.etag
-            });
             res.end();
-            console.log(`[Upload] Uploaded new file with name: '${req.file?.originalname}' and size: ${req.file?.size}`);
         })
-    } else {
-        res.status(400);
-        res.send(`Request parameter mismatch.`);
-        res.end();
-    }
 });
 
 
