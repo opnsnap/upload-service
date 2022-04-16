@@ -13,7 +13,7 @@ app.use('/usvc/healthcheck', require('express-healthcheck')());
 const multer = Multer({ storage: Multer.memoryStorage(), limits: { fileSize: 1024 * 1024 * 1 /*1mb*/ } }).single("file");
 const minioClient = new Client({
     endPoint: process.env.MINIO_ENDPOINT!,
-    port: (process.env.MINIO_PORT) ? parseInt(process.env.MINIO_PORT, 10) : 8080,
+    port: (process.env.MINIO_PORT) ? parseInt(process.env.MINIO_PORT, 10) : 9000,
     useSSL: (process.env.MINIO_SECURE === 'true'),
     accessKey: process.env.MINIO_ACCESSKEY!,
     secretKey: process.env.MINIO_SECRETKEY!
@@ -51,8 +51,8 @@ minioClient.bucketExists(process.env.MINIO_BUCKET!, function (error: any, exists
     }
 
     if (exists) {
-        app.listen(process.env.PORT, () => {
-            console.log(`Server is running on port ${process.env.PORT}`);
+        app.listen(process.env.PORT || 8080, () => {
+            console.log(`Server is running on port ${process.env.PORT || 8080}`);
         });
     } else {
         return console.log(`Bucket "${process.env.MINIO_BUCKET}" doesn't exist! Please change the configuration or create the bucket.`);
