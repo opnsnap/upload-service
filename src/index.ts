@@ -8,7 +8,7 @@ dotenv.config({ path: __dirname + '/../.env' });
 const app = express();
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
-app.use('/healthcheck', require('express-healthcheck')());
+app.use('/usvc/healthcheck', require('express-healthcheck')());
 
 const multer = Multer({ storage: Multer.memoryStorage(), limits: { fileSize: 1024 * 1024 * 1 /*1mb*/ } }).single("file");
 const minioClient = new Client({
@@ -19,7 +19,7 @@ const minioClient = new Client({
     secretKey: process.env.MINIO_SECRETKEY!
 });
 
-app.post("/upload", multer, function (req, res) {
+app.post("/usvc/upload", multer, function (req, res) {
     if (req.file /*&& req.body.uid*/) {
         minioClient.putObject(process.env.MINIO_BUCKET!, req.file.originalname, req.file.buffer, function (error, etag) {
             if (error) {
